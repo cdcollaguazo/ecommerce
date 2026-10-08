@@ -2,7 +2,7 @@ package com.cdcollaguazo.ecommerce.product_service.dto;
 
 import java.math.BigDecimal;
 
-public record ProductResponseDTO(
+public record ProductResponse(
         String id,
         String name,
         String description,

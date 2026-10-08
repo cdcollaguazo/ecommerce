@@ -1,7 +1,7 @@
 package com.cdcollaguazo.ecommerce.product_service.controller;
 
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequestDTO;
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponseDTO;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequest;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponse;
 import com.cdcollaguazo.ecommerce.product_service.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,17 +21,17 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Valid ProductRequestDTO requestDTO) {
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductRequest requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(requestDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable String id) {
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProductById(@PathVariable String id, @RequestBody @Valid ProductRequestDTO requestDTO) {
+    public ResponseEntity<ProductResponse> updateProductById(@PathVariable String id, @RequestBody @Valid ProductRequest requestDTO) {
         return ResponseEntity.ok(productService.updateProduct(id, requestDTO));
     }
 

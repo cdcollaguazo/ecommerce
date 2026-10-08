@@ -1,7 +1,7 @@
 package com.cdcollaguazo.ecommerce.product_service.service.impl;
 
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequestDTO;
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponseDTO;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequest;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponse;
 import com.cdcollaguazo.ecommerce.product_service.exception.ProductNotFoundException;
 import com.cdcollaguazo.ecommerce.product_service.mapper.ProductMapper;
 import com.cdcollaguazo.ecommerce.product_service.model.Product;
@@ -24,30 +24,30 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponseDTO createProduct(ProductRequestDTO requestDTO) {
+    public ProductResponse createProduct(ProductRequest requestDTO) {
         Product savedProduct = productRepository.save(ProductMapper.toProduct(requestDTO));
         log.info("Product {} saved", savedProduct.getName());
 
-        return ProductMapper.toProductResponseDTO(savedProduct);
+        return ProductMapper.toProductResponse(savedProduct);
     }
 
     @Override
-    public List<ProductResponseDTO> getAllProducts() {
+    public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(ProductMapper::toProductResponseDTO)
+                .map(ProductMapper::toProductResponse)
                 .toList();
     }
 
     @Override
-    public ProductResponseDTO getProductById(String id) {
+    public ProductResponse getProductById(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        return ProductMapper.toProductResponseDTO(product);
+        return ProductMapper.toProductResponse(product);
     }
 
     @Override
-    public ProductResponseDTO updateProduct(String id, ProductRequestDTO productRequestDTO) {
+    public ProductResponse updateProduct(String id, ProductRequest productRequestDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
         Product updatedProduct = productRepository.save(product);
         log.info("Product {} updated", updatedProduct.getName());
 
-        return ProductMapper.toProductResponseDTO(updatedProduct);
+        return ProductMapper.toProductResponse(updatedProduct);
     }
 
     @Override

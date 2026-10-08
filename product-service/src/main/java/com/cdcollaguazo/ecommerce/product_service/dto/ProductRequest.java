@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record ProductRequestDTO(
+public record ProductRequest(
         @NotBlank(message = "must not be blank")
         String name,
         String description,

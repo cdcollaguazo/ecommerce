@@ -1,16 +1,16 @@
 package com.cdcollaguazo.ecommerce.product_service.service;
 
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequestDTO;
-import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponseDTO;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductRequest;
+import com.cdcollaguazo.ecommerce.product_service.dto.ProductResponse;
 
 import java.util.List;
 
 public interface ProductService {
 
-    ProductResponseDTO createProduct(ProductRequestDTO requestDTO);
-    List<ProductResponseDTO> getAllProducts();
-    ProductResponseDTO getProductById(String id);
-    ProductResponseDTO updateProduct(String id, ProductRequestDTO productRequestDTO);
+    ProductResponse createProduct(ProductRequest requestDTO);
+    List<ProductResponse> getAllProducts();
+    ProductResponse getProductById(String id);
+    ProductResponse updateProduct(String id, ProductRequest productRequest);
     void deleteProductById(String id);
 
 }
