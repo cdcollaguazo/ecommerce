@@ -1,0 +1,48 @@
+services:
+  product-db:
+    image: mongo:7.0.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - product-data:/data/db
+    ports:
+      - "27017:27017"
+
+  inventory-db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory
+    volumes:
+      - inventory-data:/var/lib/mysql
+
+  order-db:
+    image: postgres:18.0
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: order
+    volumes:
+      - order-data:/var/lib/postgresql/18/docker
+    ports:
+      - "5432:5432"
+
+#  product-service:
+#    build: ./product-service
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_MONGODB_URI: mongodb://root:password@mongodb:27017/product-db?authSource=admin
+#    depends_on:
+#      - mongodb
+
+volumes:
+  product-data:
+    driver: local
+  inventory-data:
+    driver: local
+  order-data:
+    driver: local
