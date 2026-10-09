@@ -26,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse createProduct(ProductRequest requestDTO) {
         Product savedProduct = productRepository.save(ProductMapper.toProduct(requestDTO));
-        log.info("Product {} saved", savedProduct.getName());
+        log.info("Product {} created", savedProduct.getName());
 
         return ProductMapper.toProductResponse(savedProduct);
     }
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productRepository.deleteById(id);
-        log.info("Product with id {} removed", id);
+        log.info("Product with id {} deleted", id);
     }
 
 }

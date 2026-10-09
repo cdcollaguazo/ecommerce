@@ -1,3 +1,20 @@
 spring:
   application:
     name: order-service
+  threads:
+    virtual:
+      enabled: true
+  mvc:
+    servlet:
+      path: /api
+  datasource:
+    url: ${ORDER_DB_URL:jdbc:postgresql://localhost:5432/order}
+    username: ${ORDER_DB_USER:dev}
+    password: ${ORDER_DB_PASSWORD:dev}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8081

@@ -8,9 +8,9 @@ spring:
     servlet:
       path: /api
   datasource:
-    url: jdbc:mysql://localhost:3306/inventory
-    username: root
-    password: root
+    url: ${INVENTORY_DB_URL:jdbc:mysql://localhost:3306/inventory}
+    username: ${INVENTORY_DB_USER:root}
+    password: ${INVENTORY_DB_PASSWORD:root}
   jpa:
     hibernate:
       ddl-auto: update

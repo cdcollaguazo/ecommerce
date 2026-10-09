@@ -53,7 +53,6 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    @Transactional
     public InventoryResponse updateInventory(Long id, InventoryRequest request) {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new InventoryNotFoundException("id", id));
@@ -61,7 +60,10 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setSku(request.sku());
         inventory.setQuantity(request.quantity());
 
-        return InventoryMapper.toInventoryResponse(inventory);
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+        log.info("Inventory with id {} updated", inventory.getId());
+
+        return InventoryMapper.toInventoryResponse(updatedInventory);
     }
 
     @Override
