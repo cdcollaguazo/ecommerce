@@ -17,6 +17,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InventoryNotFoundException.class)
     public ProblemDetail handleInventoryNotFoundException(InventoryNotFoundException exception) {
+        log.warn("Inventory not found", exception);
+
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
@@ -29,11 +31,22 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed");
         problem.setProperty("errors", errors);
 
+        log.warn("Invalid inventory, errors: {}", errors, exception);
+
         return problem;
     }
 
     @ExceptionHandler(InventoryExistsException.class)
     public ProblemDetail handleInventoryExistsException(InventoryExistsException exception) {
+        log.warn("Invalid inventory", exception);
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidInventoryOperationException.class)
+    public ProblemDetail handleInvalidInventoryOperationException(InvalidInventoryOperationException exception) {
+        log.warn("Invalid inventory operation", exception);
+
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 

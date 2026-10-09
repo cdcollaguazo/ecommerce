@@ -17,6 +17,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ProblemDetail handleProductNotFoundException(ProductNotFoundException exception) {
+        log.warn("Product not found", exception);
+
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
@@ -28,6 +30,8 @@ public class GlobalExceptionHandler {
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed");
         problem.setProperty("errors", errors);
+
+        log.warn("Invalid product, errors: {}", errors, exception);
 
         return problem;
     }

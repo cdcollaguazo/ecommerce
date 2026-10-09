@@ -1,5 +1,6 @@
 package com.cdcollaguazo.ecommerce.inventory_service.controller;
 
+import com.cdcollaguazo.ecommerce.inventory_service.dto.InventoryOperationRequest;
 import com.cdcollaguazo.ecommerce.inventory_service.dto.InventoryRequest;
 import com.cdcollaguazo.ecommerce.inventory_service.dto.InventoryResponse;
 import com.cdcollaguazo.ecommerce.inventory_service.service.InventoryService;
@@ -38,6 +39,12 @@ public class InventoryController {
     @PutMapping("/{id}")
     public ResponseEntity<InventoryResponse> updateInventory(@PathVariable Long id, @RequestBody @Valid InventoryRequest request) {
         return ResponseEntity.ok(inventoryService.updateInventory(id, request));
+    }
+
+    @PatchMapping("/{sku}")
+    public ResponseEntity<Void> runInventoryOperation(@PathVariable String sku, @RequestBody InventoryOperationRequest request) {
+        inventoryService.runInventoryOperation(sku, request);
+        return ResponseEntity.ok().build();
     }
 
 }

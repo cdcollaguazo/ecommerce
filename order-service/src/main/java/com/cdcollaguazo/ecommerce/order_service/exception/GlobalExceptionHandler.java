@@ -17,7 +17,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderNotFoundException.class)
     public ProblemDetail handleOrderNotFoundException(OrderNotFoundException exception) {
+        log.warn("Order not found", exception);
+
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidOrderException.class)
+    public ProblemDetail handleInvalidOrderException(InvalidOrderException exception) {
+        log.warn("Invalid order", exception);
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,6 +37,8 @@ public class GlobalExceptionHandler {
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed");
         problem.setProperty("errors", errors);
+
+        log.warn("Invalid order, errors: {}", errors, exception);
 
         return problem;
     }
