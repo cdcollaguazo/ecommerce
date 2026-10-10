@@ -1,9 +1,15 @@
 package com.cdcollaguazo.ecommerce.inventory_service.dto;
 
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public record InventoryOperationRequest(
-        @Valid
-        ReduceInventoryQuantity reduceInventoryQuantity
-) {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ReduceInventoryQuantity.class, name = "REDUCE_QUANTITY")
+})
+public interface InventoryOperationRequest {
 }

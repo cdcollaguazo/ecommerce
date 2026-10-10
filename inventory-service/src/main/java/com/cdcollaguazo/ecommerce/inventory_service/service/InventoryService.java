@@ -13,6 +13,6 @@ public interface InventoryService {
     List<InventoryResponse> getAllInventory();
     InventoryResponse updateInventory(Long id, InventoryRequest request);
     void deleteInventory(Long id);
-    void runInventoryOperation(String sku, InventoryOperationRequest request);
+    InventoryResponse applyInventoryOperation(String sku, InventoryOperationRequest request);
 
 }

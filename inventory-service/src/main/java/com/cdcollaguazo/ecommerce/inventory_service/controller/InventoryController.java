@@ -42,9 +42,8 @@ public class InventoryController {
     }
 
     @PatchMapping("/{sku}")
-    public ResponseEntity<Void> runInventoryOperation(@PathVariable String sku, @RequestBody InventoryOperationRequest request) {
-        inventoryService.runInventoryOperation(sku, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<InventoryResponse> applyInventoryOperation(@PathVariable String sku, @RequestBody InventoryOperationRequest request) {
+        return ResponseEntity.ok().body(inventoryService.applyInventoryOperation(sku, request));
     }
 
 }

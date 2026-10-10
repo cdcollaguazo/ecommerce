@@ -6,8 +6,7 @@ import com.cdcollaguazo.ecommerce.inventory_service.dto.InventoryResponse;
 import com.cdcollaguazo.ecommerce.inventory_service.entity.Inventory;
 import com.cdcollaguazo.ecommerce.inventory_service.execption.InventoryExistsException;
 import com.cdcollaguazo.ecommerce.inventory_service.execption.InventoryNotFoundException;
-import com.cdcollaguazo.ecommerce.inventory_service.handler.InventoryOperation;
-import com.cdcollaguazo.ecommerce.inventory_service.handler.InventoryOperationRegistry;
+import com.cdcollaguazo.ecommerce.inventory_service.handler.InventoryOperationManager;
 import com.cdcollaguazo.ecommerce.inventory_service.mapper.InventoryMapper;
 import com.cdcollaguazo.ecommerce.inventory_service.repository.InventoryRepository;
 import com.cdcollaguazo.ecommerce.inventory_service.service.InventoryService;
@@ -21,13 +20,13 @@ import java.util.List;
 public class InventoryServiceImpl implements InventoryService {
 
     private final Logger log = LoggerFactory.getLogger(InventoryServiceImpl.class);
-    private final InventoryOperationRegistry inventoryOperationRegistry;
+    private final InventoryOperationManager inventoryOperationManager;
 
     private final InventoryRepository inventoryRepository;
 
-    public InventoryServiceImpl(InventoryOperationRegistry inventoryOperationRegistry, InventoryRepository inventoryRepository) {
-        this.inventoryOperationRegistry = inventoryOperationRegistry;
+    public InventoryServiceImpl(InventoryRepository inventoryRepository, InventoryOperationManager inventoryOperationManager) {
         this.inventoryRepository = inventoryRepository;
+        this.inventoryOperationManager = inventoryOperationManager;
     }
 
     @Override
@@ -81,15 +80,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public void runInventoryOperation(String sku, InventoryOperationRequest request) {
+    public InventoryResponse applyInventoryOperation(String sku, InventoryOperationRequest request) {
         Inventory inventory = inventoryRepository.findBySku(sku)
                 .orElseThrow(() -> new InventoryNotFoundException("sku", sku));
 
-        InventoryOperation operation = inventoryOperationRegistry.getHandler(request);
-        operation.execute(inventory, request);
+        Inventory updatedInventory = inventoryOperationManager.apply(inventory, request);
 
-        inventoryRepository.save(inventory);
-        log.info("Inventory updated {}", inventory);
+        return InventoryMapper.toInventoryResponse(updatedInventory);
     }
 
 }

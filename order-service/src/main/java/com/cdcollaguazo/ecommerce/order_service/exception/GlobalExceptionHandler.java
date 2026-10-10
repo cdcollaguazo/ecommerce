@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleInvalidOrderException(InvalidOrderException exception) {
         log.warn("Invalid order", exception);
 
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + " " + error.getDefaultMessage())
                 .toList();
 
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, "Request validation failed");
         problem.setProperty("errors", errors);
 
         log.warn("Invalid order, errors: {}", errors, exception);

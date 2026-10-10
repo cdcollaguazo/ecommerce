@@ -1,6 +1,6 @@
 package com.cdcollaguazo.ecommerce.order_service.service.client;
 
-import com.cdcollaguazo.ecommerce.order_service.dto.InventoryOperationRequest;
+import com.cdcollaguazo.ecommerce.order_service.dto.ReduceInventoryQuantityRequest;
 import com.cdcollaguazo.ecommerce.order_service.exception.InvalidOrderException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ public class HttpInventoryClient implements InventoryClient {
     }
 
     @Override
-    public void runInventoryOperation(String sku, InventoryOperationRequest request) {
+    public void reduceInventoryQuantityRequest(String sku, ReduceInventoryQuantityRequest request) {
         webClient.patch()
                 .uri("/api/v1/inventory/" + sku)
                 .contentType(MediaType.APPLICATION_JSON)

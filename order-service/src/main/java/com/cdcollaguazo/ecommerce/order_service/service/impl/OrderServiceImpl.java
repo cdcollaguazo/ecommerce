@@ -32,10 +32,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = OrderMapper.toOrder(request);
 
         for (OrderLineItem item : order.getOrderLineItems()) {
-            String sku = item.getSku();
-            ReduceInventoryQuantity operation = new ReduceInventoryQuantity(item.getQuantity());
-
-            inventoryClient.runInventoryOperation(sku, new InventoryOperationRequest(operation));
+            inventoryClient.reduceInventoryQuantityRequest(item.getSku(),
+                    new ReduceInventoryQuantityRequest("REDUCE_QUANTITY", item.getQuantity()));
         }
 
         order.setOrderNumber(UUID.randomUUID().toString());

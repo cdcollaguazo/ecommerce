@@ -7,5 +7,5 @@ public record ReduceInventoryQuantity(
         @NotNull(message = "must not be null")
         @Positive(message = "must be positive")
         Integer value
-) {
+) implements InventoryOperationRequest {
 }

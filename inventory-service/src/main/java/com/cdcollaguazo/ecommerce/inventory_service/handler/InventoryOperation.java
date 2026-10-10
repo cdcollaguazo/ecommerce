@@ -5,7 +5,7 @@ import com.cdcollaguazo.ecommerce.inventory_service.entity.Inventory;
 
 public interface InventoryOperation {
 
-    boolean supports(InventoryOperationRequest request);
-    void execute(Inventory inventory, InventoryOperationRequest request);
+    boolean supports(Class<?> request);
+    Inventory apply(Inventory inventory, InventoryOperationRequest request);
 
 }

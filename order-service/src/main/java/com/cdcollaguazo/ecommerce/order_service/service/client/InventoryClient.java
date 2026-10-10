@@ -1,9 +1,9 @@
 package com.cdcollaguazo.ecommerce.order_service.service.client;
 
-import com.cdcollaguazo.ecommerce.order_service.dto.InventoryOperationRequest;
+import com.cdcollaguazo.ecommerce.order_service.dto.ReduceInventoryQuantityRequest;
 
 public interface InventoryClient {
 
-    void runInventoryOperation(String sku, InventoryOperationRequest request);
+    void reduceInventoryQuantityRequest(String sku, ReduceInventoryQuantityRequest request);
 
 }

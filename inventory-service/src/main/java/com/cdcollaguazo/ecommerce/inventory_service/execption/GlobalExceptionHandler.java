@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + " " + error.getDefaultMessage())
                 .toList();
 
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, "Request validation failed");
         problem.setProperty("errors", errors);
 
         log.warn("Invalid inventory, errors: {}", errors, exception);
@@ -40,14 +40,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleInventoryExistsException(InventoryExistsException exception) {
         log.warn("Invalid inventory", exception);
 
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(InvalidInventoryOperationException.class)
     public ProblemDetail handleInvalidInventoryOperationException(InvalidInventoryOperationException exception) {
         log.warn("Invalid inventory operation", exception);
 
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,6 +1,7 @@
 package com.cdcollaguazo.ecommerce.order_service.dto;
 
-public record ReduceInventoryQuantity(
+public record ReduceInventoryQuantityRequest(
+        String type,
         Integer value
 ) {
 }
