@@ -1,19 +1,5 @@
 spring:
   application:
     name: product-service
-  mvc:
-    servlet:
-      path: /api
-  threads:
-    virtual:
-      enabled: true
-  mongodb:
-    host: ${MONGO_HOST:localhost}
-    port: ${MONGO_PORT:27017}
-    database: ${MONGO_DATABASE:product-db}
-    username: ${MONGO_USERNAME:root}
-    password: ${MONGO_PASSWORD:password}
-    authentication-database: ${MONGO_AUTH_DB:admin}
-
-server:
-  port: 8080
+  config:
+    import: "optional:configserver:http://localhost:8888"
