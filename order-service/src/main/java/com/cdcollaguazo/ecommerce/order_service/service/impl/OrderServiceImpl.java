@@ -10,25 +10,35 @@ import com.cdcollaguazo.ecommerce.order_service.service.OrderService;
 import com.cdcollaguazo.ecommerce.order_service.service.client.InventoryClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RefreshScope
 public class OrderServiceImpl implements OrderService {
 
     private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
     private final OrderRepository orderRepository;
     private final InventoryClient inventoryClient;
+    private final boolean isOrderEnabled;
 
-    public OrderServiceImpl(OrderRepository orderRepository, InventoryClient inventoryClient) {
+    public OrderServiceImpl(OrderRepository orderRepository, InventoryClient inventoryClient,
+                            @Value("${order.enabled}") boolean isOrderEnabled) {
         this.orderRepository = orderRepository;
         this.inventoryClient = inventoryClient;
+        this.isOrderEnabled = isOrderEnabled;
     }
 
     @Override
     public OrderResponse createOrder(OrderRequest request) {
+        if (!isOrderEnabled) {
+            throw new RuntimeException("Orders are currently disabled due to maintenance");
+        }
+
         Order order = OrderMapper.toOrder(request);
 
         for (OrderLineItem item : order.getOrderLineItems()) {
