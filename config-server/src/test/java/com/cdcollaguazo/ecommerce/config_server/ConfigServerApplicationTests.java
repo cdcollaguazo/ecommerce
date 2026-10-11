@@ -1,4 +1,4 @@
-package com.cdcollaguazo.config_server;
+package com.cdcollaguazo.ecommerce.config_server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.cdcollaguazo.config_server;
+package com.cdcollaguazo.ecommerce.config_server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
