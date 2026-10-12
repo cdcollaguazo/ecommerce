@@ -34,12 +34,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse createOrder(OrderRequest request) {
+    public OrderResponse createOrder(OrderRequest request, String userId) {
         if (!isOrderEnabled) {
             throw new RuntimeException("Orders are currently disabled due to maintenance");
         }
 
         Order order = OrderMapper.toOrder(request);
+        order.setUserId(userId);
 
         for (OrderLineItem item : order.getOrderLineItems()) {
             inventoryClient.reduceInventoryQuantityRequest(item.getSku(),
@@ -55,8 +56,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream()
+    public List<OrderResponse> getOrders(String userId, boolean isAdmin) {
+        List<Order> orders;
+
+        if (isAdmin) {
+            orders = orderRepository.findAll();
+        } else {
+            orders = orderRepository.findByUserId(userId);
+        }
+
+        return orders.stream()
                 .map(OrderMapper::toOrderResponse)
                 .toList();
     }

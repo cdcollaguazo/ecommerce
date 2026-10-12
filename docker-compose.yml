@@ -30,6 +30,36 @@ services:
     ports:
       - "5432:5432"
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.3
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: dev
+      KC_BOOTSTRAP_ADMIN_PASSWORD: dev
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: dev
+      KC_DB_PASSWORD: dev
+    command: "start-dev"
+    ports:
+      - "9090:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db:
+    image: postgres:18.0
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak-data:/var/lib/postgresql/18/docker
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      start_period: 10s
+    ports:
+      - "5433:5432"
+
 #  product-service:
 #    build: ./product-service
 #    ports:
@@ -45,4 +75,6 @@ volumes:
   inventory-data:
     driver: local
   order-data:
+    driver: local
+  keycloak-data:
     driver: local

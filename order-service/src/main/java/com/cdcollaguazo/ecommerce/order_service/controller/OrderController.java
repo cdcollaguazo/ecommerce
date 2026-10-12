@@ -6,6 +6,8 @@ import com.cdcollaguazo.ecommerce.order_service.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +23,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody @Valid OrderRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody @Valid OrderRequest request,
+                                                     JwtAuthenticationToken authentication) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request, authentication.getName()));
     }
 
     @GetMapping("/{id}")
@@ -31,8 +34,14 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<List<OrderResponse>> getOrders(JwtAuthenticationToken authentication) {
+        String userId = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_ADMIN"::equalsIgnoreCase);
+
+        return ResponseEntity.ok(orderService.getOrders(userId, isAdmin));
     }
 
     @DeleteMapping("/{id}")
