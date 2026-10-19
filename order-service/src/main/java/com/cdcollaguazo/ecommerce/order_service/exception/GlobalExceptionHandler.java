@@ -43,6 +43,13 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(UnavailableServiceException.class)
+    public ProblemDetail handleUnavailableServiceException(UnavailableServiceException exception) {
+        //log.error("Unavailable service", exception);
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, "Unavailable service");
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleException(Exception exception) {
         log.error("An unexpected exception has occurred", exception);
