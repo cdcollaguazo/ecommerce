@@ -40,7 +40,7 @@ public class OrderMapper {
                 .map(OrderMapper::toOrderLineItemResponse)
                 .toList();
 
-        return new OrderResponse(order.getId(), order.getOrderNumber(), orderLineItemResponses);
+        return new OrderResponse(order.getId(), order.getOrderNumber(), order.getStatus().name(), orderLineItemResponses);
     }
 
 }

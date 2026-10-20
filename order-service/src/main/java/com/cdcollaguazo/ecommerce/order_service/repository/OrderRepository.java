@@ -5,10 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @Transactional(readOnly = true)
     List<Order> findByUserId(String userId);
+
+    @Transactional(readOnly = true)
+    Optional<Order> findByOrderNumber(String orderNumber);
 
 }

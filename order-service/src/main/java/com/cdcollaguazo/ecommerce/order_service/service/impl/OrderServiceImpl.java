@@ -3,6 +3,7 @@ package com.cdcollaguazo.ecommerce.order_service.service.impl;
 import com.cdcollaguazo.ecommerce.order_service.dto.*;
 import com.cdcollaguazo.ecommerce.order_service.entity.Order;
 import com.cdcollaguazo.ecommerce.order_service.entity.OrderLineItem;
+import com.cdcollaguazo.ecommerce.order_service.entity.OrderStatus;
 import com.cdcollaguazo.ecommerce.order_service.event.OrderPlacedEvent;
 import com.cdcollaguazo.ecommerce.order_service.exception.OrderNotFoundException;
 import com.cdcollaguazo.ecommerce.order_service.mapper.OrderMapper;
@@ -54,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
         */
 
         order.setOrderNumber(UUID.randomUUID().toString());
+        order.setStatus(OrderStatus.PLACED);
 
         Order savedOrder = orderRepository.save(order);
         log.info("Order created {}", savedOrder.getId());
@@ -89,17 +91,27 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getOrderById(Long id) {
         return orderRepository.findById(id)
                 .map(OrderMapper::toOrderResponse)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException("id", id));
     }
 
     @Override
     public void deleteOrderById(Long id) {
         if (!orderRepository.existsById(id)) {
-            throw new OrderNotFoundException(id);
+            throw new OrderNotFoundException("id", id);
         }
 
         orderRepository.deleteById(id);
         log.info("Order with id {} was deleted", id);
+    }
+
+    @Override
+    public void updateOrderStatus(String orderNumber, OrderStatus newStatus) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException("orderNumber", orderNumber));
+
+        order.setStatus(newStatus);
+
+        orderRepository.save(order);
     }
 
 }

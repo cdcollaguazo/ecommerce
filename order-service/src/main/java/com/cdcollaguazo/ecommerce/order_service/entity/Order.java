@@ -22,6 +22,9 @@ public class Order {
 
     private String userId;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
 
