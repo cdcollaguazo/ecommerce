@@ -71,6 +71,12 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  mail:
+    image: maildev/maildev
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
 #  product-service:
 #    build: ./product-service
 #    ports:
