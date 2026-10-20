@@ -12,7 +12,9 @@ import com.cdcollaguazo.ecommerce.inventory_service.repository.InventoryReposito
 import com.cdcollaguazo.ecommerce.inventory_service.service.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -87,6 +89,14 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory updatedInventory = inventoryOperationManager.apply(inventory, request);
 
         return InventoryMapper.toInventoryResponse(updatedInventory);
+    }
+
+    @Override
+    @Transactional
+    public void applyInventoryOperations(List<Pair<String, InventoryOperationRequest>> operations) {
+        for (var pair : operations) {
+            applyInventoryOperation(pair.getFirst(), pair.getSecond());
+        }
     }
 
 }

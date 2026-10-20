@@ -60,6 +60,17 @@ services:
     ports:
       - "5433:5432"
 
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
 #  product-service:
 #    build: ./product-service
 #    ports:
@@ -77,4 +88,6 @@ volumes:
   order-data:
     driver: local
   keycloak-data:
+    driver: local
+  rabbitmq-data:
     driver: local

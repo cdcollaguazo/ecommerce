@@ -3,6 +3,7 @@ package com.cdcollaguazo.ecommerce.order_service.service.impl;
 import com.cdcollaguazo.ecommerce.order_service.dto.*;
 import com.cdcollaguazo.ecommerce.order_service.entity.Order;
 import com.cdcollaguazo.ecommerce.order_service.entity.OrderLineItem;
+import com.cdcollaguazo.ecommerce.order_service.event.OrderPlacedEvent;
 import com.cdcollaguazo.ecommerce.order_service.exception.OrderNotFoundException;
 import com.cdcollaguazo.ecommerce.order_service.mapper.OrderMapper;
 import com.cdcollaguazo.ecommerce.order_service.repository.OrderRepository;
@@ -10,6 +11,7 @@ import com.cdcollaguazo.ecommerce.order_service.service.OrderService;
 import com.cdcollaguazo.ecommerce.order_service.service.client.InventoryClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -25,12 +27,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final InventoryClient inventoryClient;
     private final boolean isOrderEnabled;
+    private final RabbitTemplate rabbitTemplate;
 
     public OrderServiceImpl(OrderRepository orderRepository, InventoryClient inventoryClient,
-                            @Value("${order.enabled}") boolean isOrderEnabled) {
+                            @Value("${order.enabled}") boolean isOrderEnabled, RabbitTemplate rabbitTemplate) {
         this.orderRepository = orderRepository;
         this.inventoryClient = inventoryClient;
         this.isOrderEnabled = isOrderEnabled;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -42,15 +46,26 @@ public class OrderServiceImpl implements OrderService {
         Order order = OrderMapper.toOrder(request);
         order.setUserId(userId);
 
+        /*
         for (OrderLineItem item : order.getOrderLineItems()) {
             inventoryClient.reduceInventoryQuantityRequest(item.getSku(),
                     new ReduceInventoryQuantityRequest("REDUCE_QUANTITY", item.getQuantity()));
         }
+        */
 
         order.setOrderNumber(UUID.randomUUID().toString());
 
         Order savedOrder = orderRepository.save(order);
         log.info("Order created {}", savedOrder.getId());
+
+        List<OrderPlacedEvent.OrderItemEvent> orderItems = order.getOrderLineItems().stream()
+                .map(item -> new OrderPlacedEvent.OrderItemEvent(item.getSku(), item.getPrice().toString(), item.getQuantity()))
+                .toList();
+
+        OrderPlacedEvent event = new OrderPlacedEvent(savedOrder.getOrderNumber(), request.email(), orderItems);
+
+        rabbitTemplate.convertAndSend("order-events", "order.placed", event);
+        log.info("Order placed event sent {}", event);
 
         return OrderMapper.toOrderResponse(savedOrder);
     }
