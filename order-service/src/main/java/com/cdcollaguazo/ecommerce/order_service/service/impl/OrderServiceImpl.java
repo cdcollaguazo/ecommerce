@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderLineItem item : order.getOrderLineItems()) {
             inventoryClient.reduceInventoryQuantityRequest(item.getSku(),
-                    new ReduceInventoryQuantityRequest("REDUCE_QUANTITY", item.getQuantity())).join();
+                    new ReduceInventoryQuantityRequest("REDUCE_QUANTITY", item.getQuantity()));
         }
 
         order.setOrderNumber(UUID.randomUUID().toString());

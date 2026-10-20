@@ -5,7 +5,6 @@ import com.cdcollaguazo.ecommerce.order_service.exception.InvalidOrderException;
 import com.cdcollaguazo.ecommerce.order_service.exception.UnavailableServiceException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
@@ -30,26 +29,22 @@ public class HttpInventoryClient implements InventoryClient {
     @Override
     @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
     @Retry(name = "inventory")
-    @TimeLimiter(name = "inventory")
-    public CompletableFuture<Void> reduceInventoryQuantityRequest(String sku, ReduceInventoryQuantityRequest request) {
-        return CompletableFuture.runAsync( () -> {
-            webClient.patch()
-                    .uri("/api/v1/inventory/" + sku)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(request)
-                    .retrieve()
-                    .onStatus(
-                            HttpStatusCode::is4xxClientError,
-                            response -> response.bodyToMono(ProblemDetail.class)
-                                    .map(problemDetail -> new InvalidOrderException(problemDetail.getDetail()))
-                    )
-                    .bodyToMono(Void.class)
-                    .block();
-        });
+    public void reduceInventoryQuantityRequest(String sku, ReduceInventoryQuantityRequest request) {
+        webClient.patch()
+                .uri("/api/v1/inventory/" + sku)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .onStatus(
+                        HttpStatusCode::is4xxClientError,
+                        response -> response.bodyToMono(ProblemDetail.class)
+                                .map(problemDetail -> new InvalidOrderException(problemDetail.getDetail()))
+                )
+                .bodyToMono(Void.class)
+                .block();
     }
 
     public CompletableFuture<Void> fallbackMethod(String sku, ReduceInventoryQuantityRequest request, Throwable throwable) {
-        log.info("Fallback called at {}", Instant.now());
         throw new UnavailableServiceException(throwable);
     }
 

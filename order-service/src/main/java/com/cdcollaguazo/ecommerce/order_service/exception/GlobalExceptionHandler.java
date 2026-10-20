@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnavailableServiceException.class)
     public ProblemDetail handleUnavailableServiceException(UnavailableServiceException exception) {
-        //log.error("Unavailable service", exception);
+        log.error("Unavailable service", exception);
 
         return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, "Unavailable service");
     }
