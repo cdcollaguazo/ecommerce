@@ -2,17 +2,16 @@ package com.cdcollaguazo.ecommerce.order_service.service.impl;
 
 import com.cdcollaguazo.ecommerce.order_service.dto.*;
 import com.cdcollaguazo.ecommerce.order_service.entity.Order;
-import com.cdcollaguazo.ecommerce.order_service.entity.OrderLineItem;
 import com.cdcollaguazo.ecommerce.order_service.entity.OrderStatus;
 import com.cdcollaguazo.ecommerce.order_service.event.OrderPlacedEvent;
 import com.cdcollaguazo.ecommerce.order_service.exception.OrderNotFoundException;
 import com.cdcollaguazo.ecommerce.order_service.mapper.OrderMapper;
 import com.cdcollaguazo.ecommerce.order_service.repository.OrderRepository;
 import com.cdcollaguazo.ecommerce.order_service.service.OrderService;
+import com.cdcollaguazo.ecommerce.order_service.service.OutboxEventService;
 import com.cdcollaguazo.ecommerce.order_service.service.client.InventoryClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -26,16 +25,14 @@ public class OrderServiceImpl implements OrderService {
 
     private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
     private final OrderRepository orderRepository;
-    private final InventoryClient inventoryClient;
     private final boolean isOrderEnabled;
-    private final RabbitTemplate rabbitTemplate;
+    private final OutboxEventService outboxEventService;
 
     public OrderServiceImpl(OrderRepository orderRepository, InventoryClient inventoryClient,
-                            @Value("${order.enabled}") boolean isOrderEnabled, RabbitTemplate rabbitTemplate) {
+                            @Value("${order.enabled}") boolean isOrderEnabled, OutboxEventService outboxEventService) {
         this.orderRepository = orderRepository;
-        this.inventoryClient = inventoryClient;
         this.isOrderEnabled = isOrderEnabled;
-        this.rabbitTemplate = rabbitTemplate;
+        this.outboxEventService = outboxEventService;
     }
 
     @Override
@@ -46,14 +43,6 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = OrderMapper.toOrder(request);
         order.setUserId(userId);
-
-        /*
-        for (OrderLineItem item : order.getOrderLineItems()) {
-            inventoryClient.reduceInventoryQuantityRequest(item.getSku(),
-                    new ReduceInventoryQuantityRequest("REDUCE_QUANTITY", item.getQuantity()));
-        }
-        */
-
         order.setOrderNumber(UUID.randomUUID().toString());
         order.setStatus(OrderStatus.PLACED);
 
@@ -65,9 +54,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
 
         OrderPlacedEvent event = new OrderPlacedEvent(savedOrder.getOrderNumber(), request.email(), orderItems);
-
-        rabbitTemplate.convertAndSend("order-events", "order.placed", event);
-        log.info("Order placed event sent {}", event);
+        outboxEventService.saveOrderPlacedEvent(event);
 
         return OrderMapper.toOrderResponse(savedOrder);
     }
