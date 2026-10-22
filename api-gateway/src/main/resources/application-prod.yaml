@@ -1,0 +1,44 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: product-service
+              uri: ${PRODUCT_SERVICE_URL}
+              predicates:
+                - Path=/api/v1/products/**
+            - id: order-service
+              uri: ${ORDER_SERVICE_URL}
+              predicates:
+                - Path=/api/v1/orders/**
+            - id: inventory-service
+              uri: ${INVENTORY_SERVICE_URL}
+              predicates:
+                - Path=/api/v1/inventory/**
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTLP_TRACING_URL}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_LOGS_URL}
+  otlp:
+    metrics:
+      export:
+        url: ${OTLP_METRICS_URL}

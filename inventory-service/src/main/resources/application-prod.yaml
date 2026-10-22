@@ -1,0 +1,33 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  mvc:
+    servlet:
+      path: /api
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTLP_TRACING_URL}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_LOGS_URL}
+  otlp:
+    metrics:
+      export:
+        url: ${OTLP_METRICS_URL}

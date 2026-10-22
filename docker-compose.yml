@@ -86,15 +86,6 @@ services:
     environment:
       OTEL_METRIC_EXPORT_INTERVAL: 5000
 
-#  product-service:
-#    build: ./product-service
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SPRING_MONGODB_URI: mongodb://root:password@mongodb:27017/product-db?authSource=admin
-#    depends_on:
-#      - mongodb
-
 volumes:
   product-data:
     driver: local

@@ -1,0 +1,11 @@
+spring:
+  mvc:
+    servlet:
+      path: /api
+  mongodb:
+    host: localhost
+    port: 27017
+    database: product-db
+    username: root
+    password: password
+    authentication-database: admin
