@@ -6,11 +6,10 @@ import com.cdcollaguazo.ecommerce.order_service.event.OrderPlacedEvent;
 import com.cdcollaguazo.ecommerce.order_service.exception.EventNotFoundException;
 import com.cdcollaguazo.ecommerce.order_service.repository.OutboxEventRepository;
 import com.cdcollaguazo.ecommerce.order_service.service.OutboxEventService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,22 +28,18 @@ public class OutboxEventServiceImpl implements OutboxEventService {
 
     @Override
     public void saveOrderPlacedEvent(OrderPlacedEvent event) {
-        try {
-            String payload = objectMapper.writeValueAsString(event);
+        String payload = objectMapper.writeValueAsString(event);
 
-            OutboxEvent outboxEvent = OutboxEvent.builder()
-                    .aggregateId(event.orderNumber())
-                    .type(EventType.ORDER_PLACED)
-                    .payload(payload)
-                    .createdAt(LocalDateTime.now())
-                    .isProcessed(false)
-                    .build();
+        OutboxEvent outboxEvent = OutboxEvent.builder()
+                .aggregateId(event.orderNumber())
+                .type(EventType.ORDER_PLACED)
+                .payload(payload)
+                .createdAt(LocalDateTime.now())
+                .isProcessed(false)
+                .build();
 
-            outboxEventRepository.save(outboxEvent);
-            log.info("OrderPlacedEvent saved correctly in outbox: {}", event.orderNumber());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        outboxEventRepository.save(outboxEvent);
+        log.info("OrderPlacedEvent saved correctly in outbox: {}", event.orderNumber());
     }
 
     @Override

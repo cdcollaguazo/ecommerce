@@ -8,8 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,13 +35,19 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
+            Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
 
-            if (realmAccess == null || realmAccess.isEmpty()) {
+            if (resourceAccess == null || resourceAccess.isEmpty()) {
                 return Collections.emptyList();
             }
 
-            Collection<String> roles = (Collection<String>) realmAccess.get("roles");
+            Map<String, Object> client = (Map<String, Object>) resourceAccess.get("ecommerce");
+
+            if (client == null || client.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            List<String> roles = (List<String>) client.get("roles");
 
             if (roles == null ) {
                 return Collections.emptyList();

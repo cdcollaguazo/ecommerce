@@ -6,7 +6,7 @@ spring:
     servlet:
       path: /api
   mongodb:
-    host: ${DB_URL}
+    host: ${DB_HOST}
     port: ${DB_PORT}
     database: ${DB_NAME}
     username: ${DB_USER}

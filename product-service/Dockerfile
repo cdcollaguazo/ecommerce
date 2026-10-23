@@ -12,6 +12,6 @@ FROM eclipse-temurin:21-jre-alpine AS runtime
 WORKDIR /app
 COPY --from=build /build/target/product-service-*.jar ./product-service.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "product-service.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=cloud", "product-service.jar"]

@@ -9,7 +9,6 @@ import com.cdcollaguazo.ecommerce.order_service.mapper.OrderMapper;
 import com.cdcollaguazo.ecommerce.order_service.repository.OrderRepository;
 import com.cdcollaguazo.ecommerce.order_service.service.OrderService;
 import com.cdcollaguazo.ecommerce.order_service.service.OutboxEventService;
-import com.cdcollaguazo.ecommerce.order_service.service.client.InventoryClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +27,8 @@ public class OrderServiceImpl implements OrderService {
     private final boolean isOrderEnabled;
     private final OutboxEventService outboxEventService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, InventoryClient inventoryClient,
-                            @Value("${order.enabled}") boolean isOrderEnabled, OutboxEventService outboxEventService) {
+    public OrderServiceImpl(OrderRepository orderRepository, @Value("${order.enabled}") boolean isOrderEnabled,
+                            OutboxEventService outboxEventService) {
         this.orderRepository = orderRepository;
         this.isOrderEnabled = isOrderEnabled;
         this.outboxEventService = outboxEventService;

@@ -18,6 +18,12 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI}
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST}
+    port: ${RABBIT_MQ_PORT}
+    username: ${RABBIT_MQ_USER}
+    password: ${RABBIT_MQ_PASSWORD}
+    virtual-host: /
 
 management:
   tracing:
